@@ -72,7 +72,7 @@ class ACO:
         pickle.dump(melhor_caminho, open('melhor_caminho.p', 'wb'))
         delta_elitista = np.divide(self.Q, L, out=np.zeros_like(L), where=L != 0)
 
-        self.feromonios = (1-self.p)*self.feromonios + delta_feromonios + self.num_formigas_elitistas*delta_elitista
+        self.feromonios = (1-self.p)*self.feromonios + self.num_formigas_elitistas*delta_elitista
         self.feromonios_acc = np.zeros_like(self.feromonios)
 
     def inicia_formigas(self):
@@ -107,7 +107,9 @@ class ACO:
 
             # Define as cidades já visitadas
             visitadas = np.nonzero(formiga)[0]
-            print(self.feromonios)
+            # print(self.feromonios)
+
+
             # Calcula os feromonios e zera aquelas que a formiga já visitou
             prob = self.feromonios[cidade].copy()
             prob[visitadas] = 0
@@ -148,33 +150,33 @@ class ACO:
         """
 
         # Define distancia infinita e nenhuma como melhor
-        melhor = np.inf
-        melhor_formiga = None
-        melhor_caminho = None
+        melhor = {'distancia' : np.inf, 'formiga': None, 'path': None}
+        # melhor_formiga = None
+        # melhor_caminho = None
 
         # Para cada formiga, realiza a viagem e substitui a melhor
         for index, formiga in enumerate(self.formigas):
             distancia, caminho = self.viaja(formiga)
 
-            if distancia < melhor:
-                melhor = distancia
-                melhor_formiga = formiga.copy()
-                melhor_caminho = caminho
+            if distancia < melhor['distancia']:
+                melhor['distancia'] = distancia
+                melhor['formiga'] = formiga.copy()
+                melhor['path'] = caminho
 
-        print(melhor)
-
-        return melhor_formiga, melhor_caminho
+        return melhor
 
     def run(self, num_iteracoes):
-        formigas_plot = []
+        melhores = []
 
-        for _ in range(num_iteracoes):
+        for i in range(num_iteracoes):
+            print('Running it ' + str(i))
             self.inicia_formigas()
-            melhor_formiga, melhor_caminho = self.viagens()
-            formigas_plot.append(melhor_formiga)
-            self.atualiza_feromonios(melhor_caminho)
+            melhor = self.viagens()
+            self.atualiza_feromonios(melhor['path'])
+            melhores.append(melhor)
 
-        pickle.dump(formigas_plot, open('formiga.p','wb'))
+        return melhores
+        # pickle.dump(formigas_plot, open('formiga.p','wb'))
 
 
 

@@ -1,0 +1,1 @@
+__all__ = ['aptidao','selecao','mutacao','avaliacao','crossover']

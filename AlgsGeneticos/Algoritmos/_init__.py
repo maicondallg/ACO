@@ -1,0 +1,1 @@
+__all__ = ['alg_genetico2','alg_genetico','reconhecimento','hillclimbing']
